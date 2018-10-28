@@ -1,0 +1,58 @@
+#ifndef GEO_NETWORK_CLIENT_SETTINGS_H
+#define GEO_NETWORK_CLIENT_SETTINGS_H
+
+#include "../common/NodeUUID.h"
+#include "../common/Types.h"
+
+#include "../common/exceptions/IOError.h"
+#include "../common/exceptions/RuntimeError.h"
+
+#include "../../libs/json/json.h"
+
+#include <string>
+#include <fstream>
+#include <streambuf>
+
+using namespace std;
+using namespace boost::uuids;
+using json = nlohmann::json;
+
+class Settings {
+public:
+    const NodeUUID nodeUUID(
+        const json *conf = nullptr) const;
+
+    const string interface(
+        const json *conf = nullptr) const;
+
+    const uint16_t port(
+        const json *conf = nullptr) const;
+
+    const string uuid2addressHost(
+        const json *conf = nullptr) const;
+
+    const uint16_t uuid2addressPort(
+        const json *conf = nullptr) const;
+
+    vector<SerializedEquivalent> iAmGateway(
+        const json *conf = nullptr) const;
+
+    const string ethereum(
+        const json *conf = nullptr) const;
+
+    const string erc20(
+        const json *conf = nullptr) const;
+
+    const string bitcoinPublicKey(
+            const json *conf = nullptr) const;
+
+    const string ethereumMiddlewarePort(
+        const json *conf = nullptr) const;
+
+    vector<vector<double>> rates(
+        const json *conf = nullptr) ;
+
+    json loadParsedJSON() const;
+};
+
+#endif //GEO_NETWORK_CLIENT_SETTINGS_H

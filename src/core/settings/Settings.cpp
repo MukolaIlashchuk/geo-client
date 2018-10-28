@@ -1,0 +1,175 @@
+﻿#include "Settings.h"
+
+json Settings::loadParsedJSON() const {
+    string buffer;
+    try {
+        ifstream stream("conf.json");
+        buffer.assign(
+            (std::istreambuf_iterator<char>(stream)), // parentheses are valuable!
+            std::istreambuf_iterator<char>());
+        return json::parse(buffer.data());
+    } catch (...) {
+        throw IOError(
+            "Settings::loadParsedJSON: "
+                "Can't read conf.json");
+    }
+}
+
+/*
+ * Returns network interface of the node;
+ * Throws RuntimeError in case when settings can't be read.
+ */
+const string Settings::interface(const json *conf) const {
+    if (conf == nullptr) {
+        auto j = loadParsedJSON();
+        conf = &j;
+    }
+    try {
+        return (*conf).at("network").at("interface");
+    } catch (...) {
+        throw RuntimeError(
+            "Settings::interface: can't read node interface settings.");
+    }
+}
+
+/*
+ * Returns network port of the node;
+ * Throws RuntimeError in case when settings can't be read.
+ */
+const uint16_t Settings::port(const json *conf) const {
+    if (conf == nullptr) {
+        auto j = loadParsedJSON();
+        conf = &j;
+    }
+    try {
+        return (*conf).at("network").at("port");
+    } catch (...) {
+        throw RuntimeError(
+            "Settings::port: can't read node interface settings.");
+    }
+}
+
+/*
+ * Returns host of the uuid2address service;
+ * Throws RuntimeError in case when settings can't be read.
+ */
+const string Settings::uuid2addressHost(const json *conf) const {
+    if (conf == nullptr) {
+        auto j = loadParsedJSON();
+        conf = &j;
+    }
+    try {
+        return (*conf).at("uuid2address").at("host");
+    } catch (...) {
+        throw RuntimeError(
+            "Settings::uuid2addressHost: can't read node interface settings.");
+    }
+}
+
+/*
+ * Returns port of the uuid2address service;
+ * Throws RuntimeError in case when settings can't be read.
+ */
+const uint16_t Settings::uuid2addressPort(const json *conf) const {
+    if (conf == nullptr) {
+        auto j = loadParsedJSON();
+        conf = &j;
+    }
+    try {
+        return (*conf).at("uuid2address").at("port");
+    } catch (...) {
+        throw RuntimeError(
+            "Settings::uuid2addressPort: can't read node interface settings.");
+    }
+}
+
+const NodeUUID Settings::nodeUUID(const json *conf) const {
+    if (conf == nullptr) {
+        auto j = loadParsedJSON();
+        conf = &j;
+    }
+    try {
+        string hexUUID = (*conf).at("node").at("uuid");
+        return NodeUUID(hexUUID);
+    } catch (...) {
+        throw RuntimeError(
+            "Settings::nodeUUID: can't read node uuid.");
+    }
+}
+
+vector<SerializedEquivalent> Settings::iAmGateway(const json *conf) const {
+    if (conf == nullptr) {
+        auto j = loadParsedJSON();
+        conf = &j;
+    }
+    vector<SerializedEquivalent> result;
+    try {
+        result = (*conf).at("gateway").get<vector<SerializedEquivalent>>();
+        return result;
+    } catch (...) {
+        // todo : throw RuntimeError
+        return result;
+    }
+}
+
+const string Settings::ethereum(
+    const json *conf) const
+{
+    if (conf == nullptr) {
+        auto j = loadParsedJSON();
+        conf = &j;
+    }
+    try {
+        return (*conf).at("node").at("ethereum");
+    } catch (...) {
+        throw RuntimeError(
+                "Settings::ethereum: can't read ethereum.");
+    }
+}
+
+const string Settings::erc20(
+        const json *conf) const
+{
+    if (conf == nullptr) {
+        auto j = loadParsedJSON();
+        conf = &j;
+    }
+    try {
+        return (*conf).at("node").at("erc20");
+    } catch (...) {
+        throw RuntimeError(
+                "Settings::ethereum: can't read erc20.");
+    }
+}
+
+const string Settings::bitcoinPublicKey(
+        const json *conf) const
+{
+    if (conf == nullptr) {
+        auto j = loadParsedJSON();
+        conf = &j;
+    }
+    try {
+        return (*conf).at("node").at("bitcoin");
+    } catch (...) {
+        throw RuntimeError(
+                "Settings::ethereum: can't read bitcoin.");
+    }
+}
+
+vector<vector<double>> Settings::rates(
+        const json *conf)
+{
+    if (conf == nullptr) {
+        auto j = loadParsedJSON();
+        conf = &j;
+    }
+    vector<vector<double>> rates;
+    try {
+        rates = (*conf).at("rates").get<vector<vector<double>>>();
+        return rates;
+    } catch (...) {
+        // todo : throw RuntimeError
+        return rates;
+    }
+}
